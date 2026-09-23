@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dominoes — All Fives, in your browser</title>
+    <meta
+      name="description"
+      content="All Fives with a double-six set: four at the table, five tiles each and a boneyard, a spinner that opens four ways, and every multiple of five on the ends scores. You against three trash-talking computer players, first to 250. Free, no account, nothing to install."
+    />
+    <meta name="author" content="John Coffey" />
+
+    <!--
+      Canonical, because the container serving this falls back to index.html
+      for any path under /dominoes/ rather than returning a 404. That is right
+      for the app and wrong for a crawler, which would otherwise be free to
+      index /dominoes/anything-at-all as a separate page with identical content.
+    -->
+    <link rel="canonical" href="https://games.jcoffey.dev/dominoes/" />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#1b2437" />
+
+    <meta property="og:site_name" content="Games · jcoffey.dev" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dominoes — All Fives, in your browser" />
+    <meta property="og:url" content="https://games.jcoffey.dev/dominoes/" />
+    <meta
+      property="og:description"
+      content="All Fives, four at the table, first to 250. You against three, and they talk."
+    />
+    <!--
+      The preview image is served by the site rather than carried here, the
+      same as the other games: a social card is not part of the game.
+    -->
+    <meta property="og:image" content="https://games.jcoffey.dev/img/dominoes-social.png?v=2026-09-22a" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Dominoes: a line of ivory tiles snaking across green felt" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Dominoes — All Fives, in your browser" />
+    <meta
+      name="twitter:description"
+      content="All Fives, four at the table, first to 250. You against three, and they talk."
+    />
+    <meta name="twitter:image" content="https://games.jcoffey.dev/img/dominoes-social.png?v=2026-09-22a" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "VideoGame",
+        "name": "Dominoes",
+        "url": "https://games.jcoffey.dev/dominoes/",
+        "description": "All Fives with a double-six set. Four players, five tiles each and eight in the boneyard, and the first double is a spinner that opens four ways. Every play that makes the open ends a multiple of five scores it; whoever goes out scores the pips left in the other hands. First to 250. One human against three computer players that count tiles and remember every knock.",
+        "genre": ["Tile game", "Board game", "Turn-based"],
+        "gamePlatform": "Web browser",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Any modern web browser",
+        "playMode": "SinglePlayer",
+        "numberOfPlayers": {
+          "@type": "QuantitativeValue",
+          "value": 1
+        },
+        "author": {
+          "@type": "Person",
+          "name": "John Coffey",
+          "url": "https://jcoffey.dev/"
+        },
+        "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        "inLanguage": "en"
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "John Coffey",
+            "item": "https://jcoffey.dev/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Games",
+            "item": "https://games.jcoffey.dev/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Dominoes",
+            "item": "https://games.jcoffey.dev/dominoes/"
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!--
+      What the page says before React has said anything. A crawler that does
+      not run scripts, and a reader who has them turned off, both get the game
+      described and a way onwards rather than an empty div.
+    -->
+    <noscript>
+      <h1>Dominoes</h1>
+      <p>
+        All Fives with a double-six set. Four at the table, five tiles each:
+        match a number on any open end, or draw from the boneyard. Make the ends add up to a
+        multiple of five and you score it. You play against three computer
+        players, first to 250. It needs JavaScript to play.
+      </p>
+      <p><a href="https://games.jcoffey.dev/">The rest of the games</a></p>
+      <p><a href="https://git.coffeylabs.org/jcoffey-dev/dominoes">Source, AGPL-3.0-or-later</a></p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

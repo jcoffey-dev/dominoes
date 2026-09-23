@@ -1,0 +1,527 @@
+/* =====================================================================
+   Dominoes.
+
+   The site's cel look: flat fills, one heavy outline on everything, no
+   gradients anywhere near the table. The felt is the one big color on the
+   page, and the tiles are ivory on it, because that is what they are.
+   ===================================================================== */
+
+.app {
+  min-height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 290px;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: 'head head' 'room side';
+  gap: 10px 18px;
+  padding: clamp(10px, 2vw, 22px);
+}
+
+.app > header {
+  grid-area: head;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+}
+
+header .ways {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 6px 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.4rem, 3.2vw, 2.2rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #ffd479;
+  -webkit-text-stroke: 3px #241a10;
+  paint-order: stroke fill;
+}
+
+button {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #f2e9d8;
+  background: #22304a;
+  border: 2px solid #2b2318;
+  border-radius: 7px;
+  padding: 4px 11px;
+  cursor: pointer;
+}
+
+button:disabled { opacity: 0.4; cursor: default; }
+button:focus-visible, .pad:focus-visible { outline: 3px solid #ffd479; outline-offset: 1px; }
+
+button.go {
+  color: #241a10;
+  background: #ffd479;
+  font-weight: 800;
+}
+
+.sound[aria-pressed='false'] { color: #8c98ab; background: #1b2437; }
+
+/* Red, because this one cannot be taken back. */
+.leave { color: #ffb3a7; background: #2c3b57; }
+
+header select {
+  font: inherit;
+  font-weight: 700;
+  color: #f2e9d8;
+  background: #22304a;
+  border: 2px solid #2b2318;
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+.dim { color: #a3b3c9; }
+.small { font-size: 0.78rem; font-weight: 600; }
+
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+
+/* ------------------------------------------------------------ the tiles */
+
+.tile rect { fill: #fffaf0; stroke: #241a10; stroke-width: 0.07; }
+.tile line { stroke: #241a10; stroke-width: 0.05; stroke-linecap: round; }
+.tile .pip { fill: #241a10; }
+.tile.last rect { fill: #fff1c7; stroke: #b3770f; stroke-width: 0.1; }
+.tile.spinner rect { stroke: #c8452f; stroke-width: 0.12; }
+.spin-mark circle { fill: #c8452f; stroke: #241a10; stroke-width: 0.07; }
+.spin-mark path { fill: #ffd479; }
+
+/* Where a held tile can be put down. The same at both ends, fit or not. */
+.pad { cursor: pointer; }
+.pad .aim { fill: transparent; }
+.pad .spot { fill: rgba(255, 250, 240, 0.12); stroke: #cfe8d9; stroke-width: 0.07; stroke-dasharray: 0.2 0.12; }
+.pad:hover .spot, .pad.hot .spot { fill: rgba(255, 212, 121, 0.35); stroke: #ffd479; stroke-width: 0.1; }
+
+/* ------------------------------------------------------------ the room */
+
+.room {
+  grid-area: room;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 150px;
+  grid-template-areas:
+    '. north .'
+    'west felt east'
+    'mine mine mine';
+  gap: 10px;
+  align-items: center;
+  align-content: start;
+}
+
+.felt {
+  grid-area: felt;
+  position: relative;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: #2f6b4f;
+  border: 3px solid #241a10;
+  border-radius: 18px;
+  box-shadow: inset 0 0 0 6px #285c44;
+}
+
+.line { width: 100%; height: auto; display: block; }
+
+.waiting {
+  position: absolute;
+  margin: 0;
+  color: #cfe8d9;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.seat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 6px;
+  border: 2px solid #2b2318;
+  border-radius: 10px;
+  background: #1b2437;
+  min-width: 0;
+}
+.seat.north { grid-area: north; justify-self: center; min-width: 180px; }
+.seat.west { grid-area: west; }
+.seat.east { grid-area: east; }
+.seat.turn, .mine.turn { box-shadow: 0 0 0 3px #ffd479; }
+
+.seat header, .mine header { display: flex; align-items: baseline; gap: 8px; }
+.pts {
+  font-weight: 900;
+  color: #241a10;
+  background: #ffd479;
+  border: 2px solid #241a10;
+  border-radius: 999px;
+  padding: 0 7px;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.backs { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; min-height: 26px; }
+.seat.west .backs, .seat.east .backs { flex-direction: column; flex-wrap: nowrap; }
+.back {
+  width: 13px;
+  height: 24px;
+  border: 2px solid #241a10;
+  border-radius: 3px;
+  background: #3a5a88;
+  box-shadow: inset 0 0 0 2px #4e72a6;
+}
+.seat.west .back, .seat.east .back { width: 24px; height: 13px; }
+
+.compass { margin-top: -4px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8c98ab; }
+.seat header { max-width: 100%; flex-wrap: wrap; justify-content: center; text-align: center; }
+
+/* The talk comes out of the man saying it: a comic bubble off the side of
+   his seat that faces the table, with its tail pointing back at him. It
+   floats over the felt rather than pushing anything about. */
+.seat { position: relative; }
+.speech {
+  position: absolute;
+  z-index: 5;
+  width: max-content;
+  max-width: 220px;
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.3;
+  text-align: center;
+  color: #241a10;
+  background: #fffaf0;
+  border: 3px solid #241a10;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  animation: pop 0.2s cubic-bezier(0.3, 1.6, 0.6, 1);
+}
+.speech::before,
+.speech::after {
+  content: '';
+  position: absolute;
+  border: solid transparent;
+}
+
+.seat.north .speech { top: calc(100% + 14px); left: 50%; translate: -50% 0; transform-origin: top center; }
+.seat.north .speech::before { bottom: 100%; left: calc(50% - 12px); border-width: 0 12px 14px; border-bottom-color: #241a10; }
+.seat.north .speech::after { bottom: calc(100% - 4px); left: calc(50% - 8px); border-width: 0 8px 10px; border-bottom-color: #fffaf0; }
+
+.seat.west .speech { left: calc(100% + 16px); top: 18px; transform-origin: left center; }
+.seat.west .speech::before { right: 100%; top: 10px; border-width: 10px 14px 10px 0; border-right-color: #241a10; }
+.seat.west .speech::after { right: calc(100% - 4px); top: 14px; border-width: 6px 10px 6px 0; border-right-color: #fffaf0; }
+
+.seat.east .speech { right: calc(100% + 16px); top: 18px; transform-origin: right center; }
+.seat.east .speech::before { left: 100%; top: 10px; border-width: 10px 0 10px 14px; border-left-color: #241a10; }
+.seat.east .speech::after { left: calc(100% - 4px); top: 14px; border-width: 6px 0 6px 10px; border-left-color: #fffaf0; }
+
+/* Your own bubble comes up out of your seat, over the table. */
+.mine { position: relative; }
+.mine > .speech { bottom: calc(100% + 14px); left: 50%; translate: -50% 0; transform-origin: bottom center; max-width: min(360px, 90%); }
+.mine > .speech::before { top: 100%; left: calc(50% - 12px); border-width: 14px 12px 0; border-top-color: #241a10; }
+.mine > .speech::after { top: calc(100% - 4px); left: calc(50% - 8px); border-width: 10px 8px 0; border-top-color: #fffaf0; }
+
+.mine header .trash { margin-left: 6px; padding: 2px 9px; font-size: 0.75rem; color: #ffb3a7; }
+.trash-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: min(460px, 100%);
+  padding: 8px;
+  background: #22304a;
+  border: 2px solid #2b2318;
+  border-radius: 10px;
+}
+.trash-menu button { text-align: left; font-weight: 700; line-height: 1.3; background: #1b2437; }
+.trash-menu button:hover { background: #3c527a; }
+.trash-menu .more { align-self: flex-end; text-align: center; color: #ffd479; background: none; }
+
+@keyframes pop { from { transform: scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.bubble { margin: 0; font-size: 0.75rem; font-weight: 800; color: #ffd479; min-height: 1.2em; }
+
+.mine {
+  grid-area: mine;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 2px solid #2b2318;
+  border-radius: 12px;
+  background: #1b2437;
+}
+
+.hand { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0; padding: 0; }
+
+.held {
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  transition: transform 0.12s;
+}
+.held .face { display: block; width: 46px; height: 92px; }
+.held:disabled { opacity: 1; cursor: default; }
+/* Every tile the same: which of them fit is for the player to see. */
+.mine.turn .held { cursor: grab; touch-action: none; }
+.mine.turn .held:hover { transform: translateY(-4px); }
+.held.lifted { transform: translateY(-12px); }
+.held.lifted .tile rect { stroke: #ffd479; stroke-width: 0.1; }
+.held.dragging { opacity: 0.25; }
+
+.floating {
+  position: fixed;
+  z-index: 10;
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(-6deg) scale(1.08);
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.5));
+}
+.floating .face { display: block; width: 46px; height: 92px; }
+
+.pick { font-size: 0.85rem; font-weight: 700; min-height: 30px; justify-content: center; }
+.knock { color: #ffd479; }
+.refusal { color: #ffb3a7; }
+
+/* ---------------------------------------------------------- the count */
+
+/* Points scored, called out on the felt: the number, big, rising and gone. */
+.callout {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: called 1.8s ease-out forwards;
+}
+.callout span {
+  font-size: clamp(3rem, 9vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1;
+  color: #ffd479;
+  -webkit-text-stroke: 4px #241a10;
+  paint-order: stroke fill;
+}
+.callout small { font-size: 0.95rem; font-weight: 900; color: #fffaf0; text-shadow: 0 2px 0 #241a10; text-transform: uppercase; letter-spacing: 0.08em; }
+@keyframes called {
+  0% { opacity: 0; transform: scale(0.5); }
+  12% { opacity: 1; transform: scale(1.1); }
+  22% { transform: scale(1); }
+  75% { opacity: 1; transform: translateY(-8px); }
+  100% { opacity: 0; transform: translateY(-24px); }
+}
+
+.tally { display: inline-flex; flex-direction: column; gap: 1px; vertical-align: middle; }
+.tally.empty { color: #5d6b80; }
+.tally-line { display: flex; gap: 3px; }
+.house { width: 26px; height: 19px; }
+.house line { stroke: #f2e9d8; stroke-width: 2.4; stroke-linecap: round; }
+.house .slash { stroke: #ffd479; }
+.table td.marks { text-align: left; padding-left: 6px; }
+
+/* ---------------------------------------------------------- the shuffle */
+
+.shuffle { position: absolute; inset: 0; overflow: hidden; border-radius: 14px; pointer-events: none; }
+.tile-back {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 44px;
+  border: 2px solid #241a10;
+  border-radius: 4px;
+  background: #3a5a88;
+  box-shadow: inset 0 0 0 3px #4e72a6;
+  transition-property: transform, opacity;
+  transition-timing-function: cubic-bezier(0.45, 0, 0.3, 1);
+}
+
+/* The boneyard, in the felt's corner, where the shuffle leaves it. */
+.boneyard {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.12);
+  border: 2px dashed rgba(207, 232, 217, 0.35);
+  border-radius: 10px;
+}
+.boneyard:hover { background: rgba(0, 0, 0, 0.22); }
+.boneyard .pile { display: grid; grid-template-columns: repeat(4, 13px); gap: 2px; min-height: 22px; }
+.boneyard .label { font-size: 0.7rem; font-weight: 800; color: #cfe8d9; text-transform: uppercase; letter-spacing: 0.06em; }
+.tile-back.small { position: static; display: block; width: 13px; height: 24px; border-width: 2px; box-shadow: inset 0 0 0 2px #4e72a6; transition: none; }
+
+/* ------------------------------------------------------------ the end */
+
+.ending {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: min(460px, 94%);
+  padding: 16px 18px;
+  border: 2px solid #2b2318;
+  border-radius: 10px;
+  background: #1b2437;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+.ending h2 { margin: 0 0 6px; color: #ffd479; font-size: 1.25rem; }
+.ending p { margin: 0 0 10px; color: #cbd6e6; line-height: 1.45; }
+.ending .final { font-weight: 800; color: #f2e9d8; }
+
+.reveal { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+.reveal th { text-align: left; padding: 3px 8px 3px 0; white-space: nowrap; }
+.reveal td { padding: 3px 0; }
+.reveal .num { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+.reveal tr.won th, .reveal tr.won .num { color: #ffd479; }
+.shown { display: flex; flex-wrap: wrap; gap: 3px; }
+.shown .face { width: 15px; height: 30px; }
+
+/* ------------------------------------------------------------ the side */
+
+.side {
+  grid-area: side;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 0.86rem;
+}
+
+.side section { display: flex; flex-direction: column; gap: 6px; }
+.side p { margin: 0; line-height: 1.45; }
+.side h2 { margin: 0; font-size: 0.95rem; color: #ffd479; }
+
+.now {
+  padding: 10px;
+  border: 2px solid #2b2318;
+  border-radius: 8px;
+  background: #22304a;
+  font-weight: 700;
+}
+
+.table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.table th, .table td { padding: 2px 4px; text-align: right; }
+.table thead th { font-size: 0.72rem; color: #a3b3c9; font-weight: 700; }
+.table tbody th { text-align: left; white-space: nowrap; }
+.table tr.now th { color: #ffd479; }
+
+.log ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.log li { font-size: 0.78rem; line-height: 1.35; color: #cbd6e6; }
+.log li.heading { margin-top: 5px; color: #ffd479; font-weight: 700; }
+
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'head' 'room' 'side';
+  }
+}
+
+/* On a phone the three opponents sit in a row above the felt. The table's
+   geometry is lost, but the felt gets the whole width, which it needs more. */
+@media (max-width: 640px) {
+  .room {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-areas:
+      'west north east'
+      'felt felt felt'
+      'mine mine mine';
+    gap: 8px;
+  }
+  .seat.north { min-width: 0; justify-self: stretch; }
+  .seat.west .backs, .seat.east .backs { flex-direction: row; flex-wrap: wrap; }
+  .seat.west .back, .seat.east .back { width: 10px; height: 18px; }
+  .back { width: 10px; height: 18px; }
+  .felt { min-height: 200px; padding: 6px; border-radius: 12px; }
+
+  /* The seats are a row above the felt here, so every bubble drops down
+     out of its seat, held to its own side of the screen. */
+  .seat.west .speech, .seat.north .speech, .seat.east .speech {
+    top: calc(100% + 14px);
+    right: auto;
+    max-width: 62vw;
+    transform-origin: top center;
+  }
+  .seat.west .speech { left: 0; translate: none; }
+  .seat.north .speech { left: 50%; translate: -50% 0; }
+  .seat.east .speech { left: auto; right: 0; translate: none; }
+  .seat.west .speech::before, .seat.east .speech::before { top: auto; bottom: 100%; left: 18px; right: auto; border-width: 0 12px 14px; border-color: transparent transparent #241a10; }
+  .seat.west .speech::after, .seat.east .speech::after { top: auto; bottom: calc(100% - 4px); left: 22px; right: auto; border-width: 0 8px 10px; border-color: transparent transparent #fffaf0; }
+  .seat.east .speech::before { left: auto; right: 18px; }
+  .seat.east .speech::after { left: auto; right: 22px; }
+  .hand { gap: 5px; }
+  .held .face { width: 38px; height: 76px; }
+}
+
+/* ---------------------------------------------------------- the landing */
+
+.landing {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(16px, 4vw, 48px);
+  line-height: 1.55;
+}
+
+.landing header { display: block; margin-bottom: 22px; }
+.landing h1 { font-size: clamp(2rem, 6vw, 3.4rem); }
+.landing .tagline { font-size: 1.1rem; color: #a3b3c9; margin: 6px 0 0; }
+
+.hero { display: flex; gap: 10px; margin-top: 18px; }
+.hero .face { width: 40px; height: 80px; }
+.hero .face:nth-child(2) { transform: rotate(-8deg); }
+.hero .face:nth-child(3) { transform: rotate(5deg) translateY(4px); }
+.hero .face:nth-child(4) { transform: rotate(-3deg); }
+
+.landing .cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 4px 36px;
+}
+
+.landing h2 { font-size: 1.05rem; color: #ffd479; margin: 22px 0 6px; letter-spacing: 0.02em; }
+.landing p { margin: 0 0 10px; }
+.landing ol { margin: 0 0 10px; padding-left: 1.3em; }
+.landing ol li { margin-bottom: 6px; }
+.landing strong { color: #f2e9d8; }
+.landing a { color: #7fc4e8; }
+
+.landing .choose { margin-top: 26px; }
+.landing .choose p { margin: 10px 0 0; }
+
+.landing .choose .start {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #241a10;
+  background: #ffd479;
+  padding: 10px 26px;
+}
+
+.landing footer {
+  margin-top: 34px;
+  padding-top: 16px;
+  border-top: 1px solid #2f3b52;
+  font-size: 0.82rem;
+  color: #8c98ab;
+}
+.landing footer p { margin: 0 0 8px; }
+.landing footer .ways { font-size: 0.95rem; color: #cbd6e6; margin-bottom: 12px; }

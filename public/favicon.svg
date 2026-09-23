@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Dominoes">
+  <!-- The double six, standing on end. Drawn by hand, like every other mark in
+       this repository. -->
+  <rect x="15" y="3" width="34" height="58" rx="7" fill="#fffaf0" stroke="#241a10" stroke-width="3.5"/>
+  <line x1="20" y1="32" x2="44" y2="32" stroke="#241a10" stroke-width="3" stroke-linecap="round"/>
+  <g fill="#241a10">
+    <circle cx="24.5" cy="11" r="3.3"/><circle cx="24.5" cy="18" r="3.3"/><circle cx="24.5" cy="25" r="3.3"/>
+    <circle cx="39.5" cy="11" r="3.3"/><circle cx="39.5" cy="18" r="3.3"/><circle cx="39.5" cy="25" r="3.3"/>
+    <circle cx="24.5" cy="39" r="3.3"/><circle cx="24.5" cy="46" r="3.3"/><circle cx="24.5" cy="53" r="3.3"/>
+    <circle cx="39.5" cy="39" r="3.3"/><circle cx="39.5" cy="46" r="3.3"/><circle cx="39.5" cy="53" r="3.3"/>
+  </g>
+</svg>
