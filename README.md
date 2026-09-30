@@ -1,5 +1,9 @@
 # Dominoes
 
+> [!NOTE]
+> Development happens on [git.coffeylabs.org/jcoffey-dev/dominoes](https://git.coffeylabs.org/jcoffey-dev/dominoes); the copy on GitHub is a read-only mirror.
+> Report issues at **[git.coffeylabs.org/jcoffey-dev/dominoes/issues](https://git.coffeylabs.org/jcoffey-dev/dominoes/issues)**, and join discussions at **[community.coffeylabs.org](https://community.coffeylabs.org)**.
+
 All Fives with a double-six set, in the browser: four at the table, five
 tiles each and a boneyard, first to 250. One human against three computer players, old men
 and young ones, every one of whom has something to say about your play.
