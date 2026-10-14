@@ -1,4 +1,5 @@
 import { TileFace } from './Tile'
+import '../arcade.css'
 
 /**
  * The page before the table.
@@ -11,6 +12,10 @@ import { TileFace } from './Tile'
 export function Landing({ target, onStart }: { target: number; onStart: () => void }) {
   return (
     <div className="landing">
+      <nav className="arcade-bar" aria-label="Arcade">
+        <a href="https://games.jcoffey.dev/">‹ Arcade</a>
+        <span aria-hidden="true">Credit free</span>
+      </nav>
       <header>
         <h1>Dominoes</h1>
         <p className="tagline">
